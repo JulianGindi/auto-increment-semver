@@ -132,11 +132,12 @@ if __name__ == "__main__":
     # Adding one argument that represents the 'highest' value you would
     # want to increment.
     parser.add_argument(
-        "--highest-value",
+        "--value",
         type=str,
         default="patch",
+        choices=["major", "minor", "patch"],
         required=False,
-        help="The highest value (minor or patch) to auto-increment",
+        help="The highest semver element value to auto-increment",
     )
 
     parser.add_argument(
