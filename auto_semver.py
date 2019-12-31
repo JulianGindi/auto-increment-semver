@@ -7,6 +7,11 @@ import sys
 
 def parse_semver_tags(raw_semver_text):
     semver_result_output = []
+
+    # Keeping track of if we need to support the "v" sometimes used before
+    # a semver string. Example: v2.0.1
+    version_character_used = False
+
     # This is a wild regex, but it comes directly from the semver docs.
     # More here: https://semver.org/#is-there-a-suggested-regular-expression-regex-to-check-a-semver-string
     regex_string = (
@@ -23,6 +28,12 @@ def parse_semver_tags(raw_semver_text):
     for line in raw_semver_text.splitlines():
         # Removing the fixed part of the git tag output we won't need.
         line_cleaned = line.replace("refs/tags/", "")
+
+        # We will be left with a raw semver or one beginning with a "v".
+        if line_cleaned[0] == "v":
+            line_cleaned = line_cleaned.replace("v", "")
+            version_character_used = True
+
         match = regex.match(line_cleaned)
 
         # We don't do anything if we don't have a valid semver
@@ -40,6 +51,7 @@ def parse_semver_tags(raw_semver_text):
             "minor": minor,
             "patch": patch,
             "prerelease": prerelease,
+            "version_prefix": version_character_used,
             "buildmetadata": buildmetadata,
         }
         semver_result_output.append(semver_entry)
@@ -134,7 +146,13 @@ def auto_increment_semver_tags(args):
     auto_incremented_tag = increment_specified_semver_number(
         highest_tag, args.value
     )
-    print(auto_incremented_tag["semver"])
+
+    semver_string = auto_incremented_tag["semver"]
+
+    if highest_tag["version_prefix"] == True:
+        semver_string = "v{}".format(auto_incremented_tag["semver"])
+
+    print(semver_string)
 
 
 if __name__ == "__main__":
