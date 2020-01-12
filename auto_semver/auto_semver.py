@@ -155,7 +155,7 @@ def auto_increment_semver_tags(args):
     print(semver_string)
 
 
-if __name__ == "__main__":
+def parse_cli_arguments():
     parser = argparse.ArgumentParser(description="Auto increment semver tags")
 
     # Adding one argument that represents the 'highest' value you would
@@ -186,5 +186,4 @@ if __name__ == "__main__":
         help="Should the script just print the highest semver value without auto-incrementing?",
     )
 
-    args = parser.parse_args()
-    auto_increment_semver_tags(args)
+    return parser.parse_args()
