@@ -9,7 +9,9 @@ setup(
     author_email="julian@gindi.io",
     license="MIT",
     packages=["auto_semver"],
-    scripts=["bin/auto-semver"],
     zip_safe=False,
+    entry_points={
+        "console_scripts": ["auto-semver=auto_semver.__main__:main",]
+    },
 )
 

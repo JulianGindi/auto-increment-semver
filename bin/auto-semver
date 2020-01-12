@@ -1,6 +1,0 @@
-#!/usr/bin/env python
-
-import auto_semver
-
-args = auto_semver.parse_cli_arguments()
-auto_semver.auto_increment_semver_tags(args)
