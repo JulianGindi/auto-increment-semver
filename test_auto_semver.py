@@ -1,150 +1,64 @@
 import unittest
 
-import auto_semver
+
+from auto_semver.semver import Semver
+from auto_semver.auto_semver import AutoSemver
 
 
 class TestAutoSemver(unittest.TestCase):
     def setUp(self):
         self.semver_list_minor = [
-            {
-                "semver": "0.1.0",
-                "major": "0",
-                "minor": "1",
-                "patch": "0",
-                "version_prefix": False,
-                "prerelease": None,
-                "buildmetadata": None,
-            },
-            {
-                "semver": "0.6.3",
-                "major": "0",
-                "minor": "6",
-                "patch": "3",
-                "version_prefix": False,
-                "prerelease": None,
-                "buildmetadata": None,
-            },
-            {
-                "semver": "0.3.65",
-                "major": "0",
-                "minor": "3",
-                "patch": "65",
-                "version_prefix": False,
-                "prerelease": None,
-                "buildmetadata": None,
-            },
+            Semver("0.1.0"),
+            Semver("0.6.3"),
+            Semver("0.3.65"),
         ]
 
         self.semver_list_major = [
-            {
-                "semver": "2.1.0",
-                "major": "2",
-                "minor": "1",
-                "patch": "0",
-                "version_prefix": False,
-                "prerelease": None,
-                "buildmetadata": None,
-            },
-            {
-                "semver": "1.6.3",
-                "major": "1",
-                "minor": "6",
-                "patch": "3",
-                "version_prefix": False,
-                "prerelease": None,
-                "buildmetadata": None,
-            },
-            {
-                "semver": "0.3.65",
-                "major": "0",
-                "minor": "3",
-                "patch": "65",
-                "version_prefix": False,
-                "prerelease": None,
-                "buildmetadata": None,
-            },
+            Semver("2.1.0"),
+            Semver("1.6.3"),
+            Semver("0.3.65"),
         ]
 
         self.semver_list_patch = [
-            {
-                "semver": "1.6.23",
-                "major": "1",
-                "minor": "6",
-                "patch": "23",
-                "version_prefix": False,
-                "prerelease": None,
-                "buildmetadata": None,
-            },
-            {
-                "semver": "1.6.3",
-                "major": "1",
-                "minor": "6",
-                "patch": "3",
-                "version_prefix": False,
-                "prerelease": None,
-                "buildmetadata": None,
-            },
-            {
-                "semver": "0.3.65",
-                "major": "0",
-                "minor": "3",
-                "patch": "65",
-                "version_prefix": False,
-                "prerelease": None,
-                "buildmetadata": None,
-            },
+            Semver("1.6.23"),
+            Semver("1.6.3"),
+            Semver("0.3.65"),
         ]
 
     def test_get_highest_semver_minor_comparison(self):
         expected_highest = "0.6.3"
-        self.assertEqual(
-            expected_highest,
-            auto_semver.get_highest_tag_from_list(self.semver_list_minor)[
-                "semver"
-            ],
-        )
+        a = AutoSemver(self.semver_list_minor, "minor", False)
+        a.get_highest_semver_from_list()
+
+        self.assertEqual(expected_highest, a.current_semver.semver)
 
     def test_get_highest_semver_major_comparison(self):
         expected_highest = "2.1.0"
-        self.assertEqual(
-            expected_highest,
-            auto_semver.get_highest_tag_from_list(self.semver_list_major)[
-                "semver"
-            ],
-        )
+        a = AutoSemver(self.semver_list_major, "minor", False)
+        a.get_highest_semver_from_list()
+
+        self.assertEqual(expected_highest, a.current_semver.semver)
 
     def test_get_highest_semver_patch_comparison(self):
         expected_highest = "1.6.23"
-        self.assertEqual(
-            expected_highest,
-            auto_semver.get_highest_tag_from_list(self.semver_list_patch)[
-                "semver"
-            ],
-        )
+        a = AutoSemver(self.semver_list_patch, "minor", False)
+        a.get_highest_semver_from_list()
+
+        self.assertEqual(expected_highest, a.current_semver.semver)
 
     def test_auto_increment_patch_version(self):
         expected_end_result = "1.6.24"
-        highest_semver = auto_semver.get_highest_tag_from_list(
-            self.semver_list_patch
-        )
-        self.assertEqual(
-            expected_end_result,
-            auto_semver.increment_specified_semver_number(
-                highest_semver, "patch"
-            )["semver"],
-        )
+        a = AutoSemver(self.semver_list_patch, "patch", False)
+        a.auto_increment_semver()
+
+        self.assertEqual(expected_end_result, a.next_semver.semver)
 
     def test_auto_increment_minor_version(self):
         expected_end_result = "0.7.0"
-        highest_semver = auto_semver.get_highest_tag_from_list(
-            self.semver_list_minor
-        )
-        self.assertEqual(
-            expected_end_result,
-            auto_semver.increment_specified_semver_number(
-                highest_semver, "minor"
-            )["semver"],
-        )
+        a = AutoSemver(self.semver_list_minor, "minor", False)
+        a.auto_increment_semver()
+
+        self.assertEqual(expected_end_result, a.next_semver.semver)
 
 
 if __name__ == "__main__":
