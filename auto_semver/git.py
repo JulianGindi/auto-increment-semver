@@ -12,7 +12,7 @@ class GitTagSource(object):
     def _get_remote_tags(self):
         # Git command to list remote tags, only grabbing tags and not the
         # commit hashes.
-        tag_command = "git ls-remote --tags -q {} | awk '{{print $2}}'".format(
+        tag_command = "git ls-remote --tags --refs -q {} | awk '{{print $2}}'".format(
             self.custom_remote
         )
 
@@ -41,7 +41,12 @@ class GitTagSource(object):
         for line in raw_semver_text.splitlines():
             # Removing the fixed part of the git tag output we won't need.
             line_cleaned = line.replace("refs/tags/", "")
-            semver = Semver(line_cleaned)
+            try:
+                semver = Semver(line_cleaned)
+            except ValueError:
+                # It is just an invalid semver, and we will continue
+                # along without using it.
+                continue
 
             if semver is not None:
                 semver_result_output.append(semver)

@@ -4,11 +4,16 @@ import re
 
 class Semver(object):
     def __init__(self, semver_string):
-        semver_dict = self.parse_semver_string(semver_string)
+        self.original_semver_string = semver_string
+        semver_dict = self._parse_semver_string(semver_string)
 
         if semver_dict is None:
             # We were not able to parse the semver string, return an error
-            return None
+            raise ValueError(
+                "Invalid semver string, {}, being parsed.".format(
+                    self.original_semver_string
+                )
+            )
 
         self.semver = semver_dict["semver"]
         self.major = semver_dict["major"]
@@ -18,7 +23,7 @@ class Semver(object):
         self.version_prefix = semver_dict["version_prefix"]
         self.buildmetadata = semver_dict["buildmetadata"]
 
-    def parse_semver_string(self, semver_string):
+    def _parse_semver_string(self, semver_string):
         semver_dict = {"version_prefix": False}
 
         # This is a wild regex, but it comes directly from the semver docs.
