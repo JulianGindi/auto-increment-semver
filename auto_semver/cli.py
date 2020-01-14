@@ -50,4 +50,12 @@ def parse_cli_arguments():
         help="Do you want auto-semver to automatically create a new git tag for you locally?",
     )
 
+    parser.add_argument(
+        "--file",
+        type=str,
+        default="",
+        required=False,
+        help="If specified, the single file to use for looking up semver values, which them increments them in-place based on --value.",
+    )
+
     return parser.parse_args()

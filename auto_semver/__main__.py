@@ -3,13 +3,19 @@ import sys
 from auto_semver.cli import parse_cli_arguments
 from auto_semver.git import GitTagSource, GitTagger
 from auto_semver.auto_semver import AutoSemver
+from auto_semver.file_replacer import SemverFileReplacer
 
 
 def main():
     args = parse_cli_arguments()
 
-    # TODO: Do some checking to determine which source to use.
-    # For now, the only one we support is the GitTagSource
+    if args.file is not "":
+        # We will use the specified file as our semver source.
+        sfr = SemverFileReplacer(args.file, args.value)
+        sfr.find_and_replace_semver_instances()
+        print("Updated semver values in {}".format(args.file))
+        return
+
     git_semver_list = GitTagSource(args.use_local).get_semver_list()
     a = AutoSemver(git_semver_list, args.value, args.print_highest)
     next_tag = a.auto_increment_semver()
