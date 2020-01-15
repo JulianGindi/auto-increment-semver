@@ -1,8 +1,10 @@
+import os
 import unittest
 
 
 from auto_semver.semver import Semver
 from auto_semver.auto_semver import AutoSemver
+from auto_semver.file_replacer import SemverFileReplacer
 
 
 class TestAutoSemver(unittest.TestCase):
@@ -59,6 +61,39 @@ class TestAutoSemver(unittest.TestCase):
         a._auto_increment_semver()
 
         self.assertEqual(expected_end_result, a.next_semver.semver)
+
+
+class TestSemverFileReplacer(unittest.TestCase):
+    def setUp(self):
+        self.filename = "test.txt"
+
+        test_text = """
+        apiVersion: v2
+        appVersion: 0.1.0
+        ports:
+            - 8080
+            - 3020
+        """
+
+        with open(self.filename, "w") as f:
+            f.write(test_text)
+
+    def tearDown(self):
+        os.remove(self.filename)
+
+    def test_find_and_replace_semver_patch(self):
+        expected_file_output = """
+        apiVersion: v2
+        appVersion: 0.1.1
+        ports:
+            - 8080
+            - 3020
+        """
+
+        sfr = SemverFileReplacer(self.filename, "patch", "update")
+        sfr.find_and_replace_semver_instances()
+        result_data = open(self.filename).read()
+        self.assertEqual(result_data, expected_file_output)
 
 
 if __name__ == "__main__":
