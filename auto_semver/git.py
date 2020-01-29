@@ -6,8 +6,9 @@ from auto_semver.semver import Semver
 
 class GitTagSource(object):
     # Class that grabs tags from a git remote
-    def __init__(self, custom_remote=""):
+    def __init__(self, use_local, custom_remote=""):
         self.custom_remote = custom_remote
+        self.use_local = use_local
 
     def _get_remote_tags(self):
         # Git command to list remote tags, only grabbing tags and not the
@@ -15,6 +16,30 @@ class GitTagSource(object):
         tag_command = "git ls-remote --tags --refs -q {} | awk '{{print $2}}'".format(
             self.custom_remote
         )
+
+        command_output = subprocess.run(
+            tag_command,
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            universal_newlines=True,
+        )
+
+        # Checking to make sure our command succeeded. The stdout() function
+        # returns None if the command fails and there is no output.
+        if command_output.stderr != "":
+            sys.exit("Error getting tags from remote")
+        elif command_output.stdout == "":
+            # There are no returned tags, writing a message to stdout and exiting.
+            print("No tags found. Nothing to do.")
+            sys.exit(0)
+
+        return command_output.stdout
+
+    def _get_local_tags(self):
+        # Git command to list remote tags, only grabbing tags and not the
+        # commit hashes.
+        tag_command = "git show-ref --tags -d | awk '{{print $2}}'"
 
         command_output = subprocess.run(
             tag_command,
@@ -54,5 +79,8 @@ class GitTagSource(object):
         return semver_result_output
 
     def get_semver_list(self):
-        raw_semver_tag_output = self._get_remote_tags()
+        if self.use_local:
+            raw_semver_tag_output = self._get_local_tags()
+        else:
+            raw_semver_tag_output = self._get_remote_tags()
         return self._parse_git_tag_output_string(raw_semver_tag_output)

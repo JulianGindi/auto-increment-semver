@@ -10,7 +10,7 @@ def main():
 
     # TODO: Do some checking to determine which source to use.
     # For now, the only one we support is the GitTagSource
-    git_semver_list = GitTagSource().get_semver_list()
+    git_semver_list = GitTagSource(args.use_local).get_semver_list()
     a = AutoSemver(git_semver_list, args.value, args.print_highest)
     a.auto_increment_semver()
 

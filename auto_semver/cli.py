@@ -32,4 +32,12 @@ def parse_cli_arguments():
         help="Should the script just print the highest semver value without auto-incrementing?",
     )
 
+    parser.add_argument(
+        "--use-local",
+        action="store_true",
+        default=False,
+        required=False,
+        help="Should the script reference local git tags instead of remote?",
+    )
+
     return parser.parse_args()
