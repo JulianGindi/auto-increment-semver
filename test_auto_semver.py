@@ -90,7 +90,7 @@ class TestSemverFileReplacer(unittest.TestCase):
             - 3020
         """
 
-        sfr = SemverFileReplacer(self.filename, "patch", "update")
+        sfr = SemverFileReplacer(self.filename, "patch")
         sfr.find_and_replace_semver_instances()
         result_data = open(self.filename).read()
         self.assertEqual(result_data, expected_file_output)

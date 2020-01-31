@@ -13,8 +13,7 @@ def main():
         # We will use the specified file as our semver source.
         sfr = SemverFileReplacer(args.file, args.value)
         sfr.find_and_replace_semver_instances()
-        print("Updated semver values in {}".format(args.file))
-        return
+        sys.exit("Updated semver values in {}".format(args.file))
 
     git_semver_list = GitTagSource(args.use_local).get_semver_list()
     a = AutoSemver(git_semver_list, args.value, args.print_highest)
