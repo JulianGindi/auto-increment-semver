@@ -51,6 +51,7 @@ def parse_cli_arguments():
     )
 
     parser.add_argument(
+        "-f",
         "--file",
         type=str,
         default="",
