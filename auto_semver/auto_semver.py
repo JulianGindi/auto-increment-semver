@@ -49,7 +49,7 @@ class AutoSemver(object):
         if self.next_semver.version_prefix == True:
             semver_string = "v{}".format(self.next_semver.semver)
 
-        print(semver_string)
+        return semver_string
 
     def get_highest_semver_from_list(self):
         # We will start our comparisons with the first tag in the list.

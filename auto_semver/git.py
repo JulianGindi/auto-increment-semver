@@ -4,6 +4,36 @@ import sys
 from auto_semver.semver import Semver
 
 
+class GitTagger(object):
+    def __init__(self, semver_tag):
+        self.semver_tag = semver_tag
+
+    def tag_local(self):
+        tag_command = "git tag {}".format(self.semver_tag)
+
+        command_output = subprocess.run(
+            tag_command,
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            universal_newlines=True,
+        )
+
+        # Checking to make sure our command succeeded. The stdout() function
+        # returns None if the command fails and there is no output.
+        if "already exists" in command_output.stderr:
+            sys.exit(
+                "Git tag: {} already exists locally. Doing nothing...".format(
+                    self.semver_tag
+                )
+            )
+
+        elif command_output.stderr != "":
+            sys.exit("Error creating git tags locally...")
+
+        print("Created {} git tag locally".format(self.semver_tag))
+
+
 class GitTagSource(object):
     # Class that grabs tags from a git remote
     def __init__(self, use_local, custom_remote=""):

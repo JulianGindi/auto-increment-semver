@@ -40,4 +40,14 @@ def parse_cli_arguments():
         help="Should the script reference local git tags instead of remote?",
     )
 
+    parser.add_argument(
+        "-t",
+        "--tag",
+        dest="should_tag",
+        action="store_true",
+        default=False,
+        required=False,
+        help="Do you want auto-semver to automatically create a new git tag for you locally?",
+    )
+
     return parser.parse_args()
