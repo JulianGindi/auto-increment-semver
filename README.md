@@ -29,3 +29,7 @@ Auto-incrementing a minor version.
 Just print out the current highest git semver tag.
 
 `auto-semver --print-highest`
+
+You can also have auto-semver create a git tag for you locally by running a `git tag` command.
+
+`auto-semver -t`
