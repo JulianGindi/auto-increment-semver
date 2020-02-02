@@ -17,7 +17,7 @@ def main():
 
     git_semver_list = GitTagSource(args.use_local).get_semver_list()
     a = AutoSemver(git_semver_list, args.value, args.print_highest)
-    next_tag = a.auto_increment_semver()
+    next_tag = a.print()
 
     if args.should_tag:
         git_tagger = GitTagger(next_tag)
